@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hantavirus Outbreak Tracker · Research Collective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-sage: #43977e;
+    --green-teal: #0e6565;
+    --green-light: #61c07b;
+    --black: #141311;
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface2: #edeae3;
+    --border: rgba(20,19,17,0.12);
+    --text: #141311;
+    --text-muted: #5a5850;
+    --text-faint: #9a9589;
+    --red: #c0392b;
+    --amber: #d4870a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--black);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mic {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mic svg { width: 22px; height: 22px; fill: white; }
+
+  .logo-bubbles {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .bubble-research {
+    background: white;
+    color: var(--black);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px 5px 5px 0;
+    letter-spacing: 0.02em;
+  }
+
+  .bubble-collective {
+    background: var(--green-light);
+    color: #0e3b2a;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 0 5px 5px 5px;
+    letter-spacing: 0.02em;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(97,192,123,0.15);
+    border: 1px solid rgba(97,192,123,0.3);
+    color: var(--green-light);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-light);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .header-date {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── Hero strip ── */
+  .hero {
+    background: var(--green-teal);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: 80px;
+    bottom: -80px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(26px, 4vw, 40px);
+    color: white;
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .who-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.85);
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.03em;
+    position: relative;
+  }
+
+  /* ── Main ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── Key metrics ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 700px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.25rem 1rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .metric-card:nth-child(1) { animation-delay: 0.05s; }
+  .metric-card:nth-child(2) { animation-delay: 0.1s; }
+  .metric-card:nth-child(3) { animation-delay: 0.15s; }
+  .metric-card:nth-child(4) { animation-delay: 0.2s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .metric-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .metric-card.confirmed::after { background: var(--green-teal); }
+  .metric-card.suspected::after { background: var(--green-sage); }
+  .metric-card.deaths::after { background: var(--black); }
+  .metric-card.cfr::after { background: var(--amber); }
+
+  .metric-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  .metric-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .confirmed .metric-number { color: var(--green-teal); }
+  .suspected .metric-number { color: var(--green-sage); }
+  .deaths .metric-number { color: var(--black); }
+  .cfr .metric-number { color: var(--amber); }
+
+  .metric-note {
+    font-size: 11px;
+    color: var(--text-faint);
+    line-height: 1.4;
+  }
+
+  /* ── Source tag ── */
+  .source-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-faint);
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ── Two col layout ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 750px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  /* ── Section cards ── */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: 0.25s;
+  }
+
+  .card-heading {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-teal);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Timeline ── */
+  .timeline { display: flex; flex-direction: column; }
+
+  .tl-item {
+    display: flex;
+    gap: 14px;
+    padding-bottom: 1.25rem;
+    position: relative;
+  }
+
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 14px;
+    flex-shrink: 0;
+  }
+
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tl-dot.death { border-color: var(--black); background: var(--black); }
+  .tl-dot.case { border-color: var(--green-teal); background: var(--green-teal); }
+  .tl-dot.event { border-color: var(--green-sage); background: transparent; }
+  .tl-dot.latest { border-color: var(--green-light); background: var(--green-light); }
+
+  .tl-line {
+    flex: 1;
+    width: 1px;
+    background: var(--border);
+    margin-top: 4px;
+  }
+
+  .tl-item:last-child .tl-line { display: none; }
+
+  .tl-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-bottom: 3px;
+    letter-spacing: 0.03em;
+  }
+
+  .tl-text {
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .tl-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+  }
+
+  .tag-death { background: rgba(20,19,17,0.08); color: var(--black); }
+  .tag-conf { background: rgba(14,101,101,0.1); color: var(--green-teal); }
+  .tag-who { background: rgba(67,151,126,0.12); color: var(--green-sage); }
+
+  /* ── Outcomes bar ── */
+  .outcomes { display: flex; flex-direction: column; gap: 12px; }
+
+  .outcome-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .outcome-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    width: 90px;
+    flex-shrink: 0;
+  }
+
+  .outcome-track {
+    flex: 1;
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .outcome-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 1s ease;
+  }
+
+  .outcome-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    width: 20px;
+    text-align: right;
+  }
+
+  /* ── Countries ── */
+  .countries-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 1rem;
+  }
+
+  .country-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* ── Ship info ── */
+  .ship-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .ship-stat {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .ship-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+
+  .ship-stat-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ── Key facts ── */
+  .facts { display: flex; flex-direction: column; gap: 10px; }
+
+  .fact-row {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    align-items: flex-start;
+  }
+
+  .fact-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .fact-text {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .fact-label {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── Risk banner ── */
+  .risk-banner {
+    background: var(--green-teal);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s ease 0.3s both;
+  }
+
+  .risk-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  .risk-text { flex: 1; }
+
+  .risk-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 3px;
+  }
+
+  .risk-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+  }
+
+  .risk-level {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--black);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 12px;
+  }
+
+  .footer-sources {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.7;
+    font-family: 'DM Mono', monospace;
+    max-width: 600px;
+  }
+
+  .footer-sources strong {
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+  }
+
+  .footer-updated {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    header { padding: 0 1rem; }
+    .hero { padding: 1.75rem 1rem 1.5rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+    .risk-banner { flex-wrap: wrap; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mic">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-6 9a6 6 0 0 0 12 0h2a8 8 0 0 1-7 7.938V20h3v2H8v-2h3v-2.062A8 8 0 0 1 4 10h2z"/>
+      </svg>
+    </div>
+    <div class="logo-bubbles">
+      <div class="bubble-research">Research</div>
+      <div class="bubble-collective">Collective</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div> Live</div>
+    <div class="header-date"><!-- HEADER_DATE -->Updated 17 May 2026<!-- /HEADER_DATE --></div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-title">Hantavirus Outbreak Tracker<br><span style="font-style: italic; color: rgba(255,255,255,0.7); font-size: 0.65em;">MV Hondius · April 2026 – Present</span></div>
+  <div class="hero-sub">Monitoring the cruise ship cluster linked to the Andes strain of hantavirus</div>
+  <div class="who-badge">📋 WHO · CDC · CIDRAP · Refreshed every 2 hours</div>
+</div>
+
+<main>
+
+  <!-- Risk banner -->
+  <div class="risk-banner">
+    <div class="risk-icon">🛡</div>
+    <div class="risk-text">
+      <div class="risk-title">WHO Global Risk Assessment</div>
+      <div class="risk-sub">"Solidarity is the best immunity. The operation to transfer the ship's passengers from Tenerife has been successfully completed." — Dr. Tedros Adhanom Ghebreyesus, 15 May 2026</div>
+    </div>
+    <div class="risk-level">LOW RISK</div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card confirmed">
+      <div class="metric-label">Confirmed cases</div>
+      <div class="metric-number"><!-- CONFIRMED -->10<!-- /CONFIRMED --></div>
+      <div class="metric-note">8 lab-confirmed + 2 probable (WHO, 15 May)</div>
+      <div class="source-tag">WHO DON599</div>
+    </div>
+    <div class="metric-card suspected">
+      <div class="metric-label">Probable cases</div>
+      <div class="metric-number"><!-- SUSPECTED -->2<!-- /SUSPECTED --></div>
+      <div class="metric-note">Awaiting lab confirmation</div>
+      <div class="source-tag">WHO · CDC</div>
+    </div>
+    <div class="metric-card deaths">
+      <div class="metric-label">Deaths</div>
+      <div class="metric-number"><!-- DEATHS -->3<!-- /DEATHS --></div>
+      <div class="metric-note">No new deaths since 2 May 2026</div>
+      <div class="source-tag">WHO · CDC</div>
+    </div>
+    <div class="metric-card cfr">
+      <div class="metric-label">Case fatality rate</div>
+      <div class="metric-number"><!-- CFR -->38%<!-- /CFR --></div>
+      <div class="metric-note">Among all 10 reported cases (CDC estimate: ~38%)</div>
+      <div class="source-tag">WHO Fact Sheet</div>
+    </div>
+  </div>
+
+  <!-- Timeline + Outcomes -->
+  <div class="two-col">
+    <div class="section-card">
+      <div class="card-heading">Case timeline</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot event"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">1 Apr 2026</div>
+            <div class="tl-text"><span class="tl-tag tag-who">Departure</span>MV Hondius leaves Ushuaia, Argentina. 147 passengers & crew from 23 nationalities. Index case believed exposed during birdwatching near a landfill in Ushuaia before boarding.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot death"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">6–11 Apr</div>
+            <div class="tl-text"><span class="tl-tag tag-death">Death 1</span>Dutch male (Case 1) develops fever, headache, abdominal pain on Apr 6. Dies aboard on Apr 11. Hantavirus not identified at time of death — symptoms resembled other illnesses.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot death"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">24–26 Apr</div>
+            <div class="tl-text"><span class="tl-tag tag-death">Death 2</span>Wife of Case 1 (Case 2) disembarks at Saint Helena with gastrointestinal symptoms; deteriorates on flight to Johannesburg. Dies on arrival at emergency dept, Apr 26. PCR confirms hantavirus on 4 May.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot case"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">24–27 Apr</div>
+            <div class="tl-text"><span class="tl-tag tag-conf">Case 3</span>British male presents with fever, shortness of breath, pneumonia signs. Medically evacuated from Ascension Island to South Africa ICU on Apr 27. PCR confirms hantavirus on 2 May. Critical but stable.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot death"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">28 Apr–2 May</div>
+            <div class="tl-text"><span class="tl-tag tag-death">Death 3</span>German woman (Case 4) develops fever and malaise on Apr 28; progresses to pneumonia and ARDS. Dies aboard on 2 May. Ship docks in Praia, Cabo Verde on 3 May.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot case"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">2–4 May</div>
+            <div class="tl-text"><span class="tl-tag tag-conf">WHO Alert</span>UK notifies WHO on 2 May. Lab in South Africa confirms Andes strain on 2 May. WHO issues Disease Outbreak Notice DON599 on 4 May. 3 additional suspected cases remain on board. Case 5 later identified in Switzerland in a passenger who left early.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot event"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">6–7 May</div>
+            <div class="tl-text"><span class="tl-tag tag-who">Update</span>WHO press briefing confirms 5 confirmed + 3 suspected cases. 12+ countries monitoring ex-passengers. Ship sails toward Tenerife. Spain agrees to allow docking.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot event"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">7–14 May</div>
+            <div class="tl-text"><span class="tl-tag tag-who">Update</span>MV Hondius docks in Tenerife. Over 120 passengers repatriated to home countries or quarantine. No new deaths since May 2. WHO coordinates response across ~30 governments.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot event"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">13–15 May</div>
+            <div class="tl-text"><span class="tl-tag tag-who">Update</span>WHO briefly reports 11 cases (9 confirmed) after a Spanish passenger in Madrid quarantine tests positive. WHO later corrects to 10 cases (8 confirmed, 2 probable) after a US passenger's inconclusive test returns negative. WHO DG briefing: 120+ passengers successfully repatriated. Captain Jan Dobrogowski and 26 crew still aboard, expected in Netherlands Monday.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot latest"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-date">17 May</div>
+            <div class="tl-text"><span class="tl-tag tag-who">Latest</span>CDC confirms 100 personnel monitoring 41 Americans (18 in biocontainment in Nebraska, 2 at Emory Atlanta — all testing negative). French passenger in Paris ICU worsened, now on artificial lung. Illinois investigating unrelated hantavirus case in resident exposed to rodent droppings at home, not linked to MV Hondius. 42-day monitoring period for ship passengers runs through ~June 22.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="section-card">
+        <div class="card-heading">Patient outcomes</div>
+        <div class="outcomes">
+          <div class="outcome-row">
+            <div class="outcome-label">Deceased</div>
+            <div class="outcome-track"><div class="outcome-fill" style="width: 30%; background: var(--black);"></div></div>
+            <div class="outcome-count">3</div>
+          </div>
+          <div class="outcome-row">
+            <div class="outcome-label">ICU / Critical</div>
+            <div class="outcome-track"><div class="outcome-fill" style="width: 20%; background: var(--green-teal);"></div></div>
+            <div class="outcome-count">2</div>
+          </div>
+          <div class="outcome-row">
+            <div class="outcome-label">Recovering</div>
+            <div class="outcome-track"><div class="outcome-fill" style="width: 30%; background: var(--green-light);"></div></div>
+            <div class="outcome-count">3</div>
+          </div>
+          <div class="outcome-row">
+            <div class="outcome-label">Probable</div>
+            <div class="outcome-track"><div class="outcome-fill" style="width: 20%; background: var(--green-sage); opacity: 0.6;"></div></div>
+            <div class="outcome-count">2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="card-heading">Ship — MV Hondius</div>
+        <div class="ship-grid">
+          <div class="ship-stat">
+            <div class="ship-stat-label">Operator</div>
+            <div class="ship-stat-val">Oceanwide Expeditions</div>
+          </div>
+          <div class="ship-stat">
+            <div class="ship-stat-label">Flag</div>
+            <div class="ship-stat-val">🇳🇱 Netherlands</div>
+          </div>
+          <div class="ship-stat">
+            <div class="ship-stat-label">Still on board</div>
+            <div class="ship-stat-val">27 crew remaining</div>
+          </div>
+          <div class="ship-stat">
+            <div class="ship-stat-label">Nationalities</div>
+            <div class="ship-stat-val">23 countries</div>
+          </div>
+          <div class="ship-stat">
+            <div class="ship-stat-label">Departed</div>
+            <div class="ship-stat-val">1 Apr · Ushuaia</div>
+          </div>
+          <div class="ship-stat">
+            <div class="ship-stat-label">Current status</div>
+            <div class="ship-stat-val" style="color: var(--amber);"><!-- SHIP_STATUS -->En route Netherlands<!-- /SHIP_STATUS --></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="card-heading">Countries monitoring cases</div>
+        <div class="countries-wrap">
+          <div class="country-pill">🇿🇦 South Africa</div>
+          <div class="country-pill">🇳🇱 Netherlands</div>
+          <div class="country-pill">🇬🇧 United Kingdom</div>
+          <div class="country-pill">🇪🇸 Spain</div>
+          <div class="country-pill">🇨🇻 Cabo Verde</div>
+          <div class="country-pill">🇺🇸 USA (Nebraska, Atlanta)</div>
+          <div class="country-pill">🇨🇦 Canada</div>
+          <div class="country-pill">🇫🇷 France</div>
+          <div class="country-pill">🇸🇬 Singapore</div>
+          <div class="country-pill">🇦🇷 Argentina</div>
+          <div class="country-pill">🇨🇭 Switzerland</div>
+          <div class="country-pill">🌍 <!-- COUNTRIES -->30+<!-- /COUNTRIES --> total</div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-faint); line-height: 1.5;">WHO coordinated response across ~30 governments. 41 Americans monitored: 18 in biocontainment at Nebraska Medical Center, 2 at Emory (Atlanta), others at home — all currently testing negative for Andes virus.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key facts -->
+  
+  <!-- Source comparison panel -->
+  <div class="section-card" style="margin-bottom: 16px; animation-delay: 0.3s;">
+    <div class="card-heading">Live source comparison</div>
+    <style>
+      .src-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+      .src-row:last-child { border-bottom: none; padding-bottom: 0; }
+      .src-name { font-size: 13px; font-weight: 600; width: 44px; flex-shrink: 0; }
+      .src-stat { display: flex; flex-direction: column; align-items: center; min-width: 64px; }
+      .src-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); margin-bottom: 2px; }
+      .src-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--text); }
+      .src-link { margin-left: auto; font-size: 11px; color: var(--green-teal); text-decoration: none; font-family: 'DM Mono', monospace; padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; }
+      .src-link:hover { background: var(--surface2); }
+    </style>
+    <!-- SOURCE_PANEL --><!-- /SOURCE_PANEL -->
+  </div>
+
+  <div class="section-card" style="margin-bottom: 0; animation-delay: 0.35s;">
+    <div class="card-heading">Key scientific facts</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+      <div class="fact-row">
+        <div class="fact-icon">🧬</div>
+        <div class="fact-text"><span class="fact-label">Strain:</span> Andes virus — the only known hantavirus with documented limited human-to-human transmission. Normally transmitted via rodent urine, feces, or saliva.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">⏱</div>
+        <div class="fact-text"><span class="fact-label">Incubation:</span> 1–8 weeks after exposure. Symptoms include fever, gastrointestinal illness, rapid progression to pneumonia and acute respiratory distress syndrome (ARDS).</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🔬</div>
+        <div class="fact-text"><span class="fact-label">Treatment:</span> No approved antiviral and no licensed vaccine exists anywhere in the world. Early ICU admission and supportive care are the only evidence-based interventions.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">📍</div>
+        <div class="fact-text"><span class="fact-label">Source hypothesis:</span> Index case likely contracted the virus birdwatching near rodent-heavy sites in Ushuaia, Argentina during a 4-month road trip through Chile, Uruguay, and Argentina before boarding.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">📡</div>
+        <div class="fact-text"><span class="fact-label">Transmission risk:</span> Human-to-human spread documented only in very close prolonged contact. Attack rate among 160+ contacts is ~6% — low compared to airborne pathogens. WHO, CDC, and CIDRAP all assess public risk as very low. No cases identified outside MV Hondius passengers.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌎</div>
+        <div class="fact-text"><span class="fact-label">Monitoring period:</span> Passengers are being monitored for 42 days from disembarkation (May 11), running through ~June 22. Illinois is separately investigating an unrelated hantavirus case in a resident exposed to rodent droppings at home — not linked to MV Hondius.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-sources">
+    <strong>Sources:</strong> WHO DON599 (4 May 2026) · WHO DG Briefings (7 & 15 May 2026) · CDC Hantavirus Response press conference (17 May 2026) · CIDRAP MV Hondius outbreak coverage · Data auto-refreshed every 2 hours from WHO, CDC & CIDRAP
+  </div>
+  <div class="footer-updated">Last updated: <!-- LAST_UPDATED -->17 May 2026, 14:00UTC<!-- /LAST_UPDATED --></div>
+</footer>
+
+</body>
+</html>
