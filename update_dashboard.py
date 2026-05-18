@@ -111,7 +111,6 @@ def extract_numbers(text):
         r"(\d+)\s*(?:have\s*been\s*)?(?:laboratory[- ]?)?confirmed",
         r"confirmed[^.]{0,80}?(\d+)\s*(?:case|patient|infection)",
         r"(\d+)\s*(?:PCR|lab)[- ]confirmed",
-        r"nine.*?(?:lab|laboratory)[- ]confirmed",   # "nine of which are confirmed"
         r"(\d+).*?(?:lab|laboratory)[- ]confirmed",
     ])
 
@@ -155,7 +154,7 @@ def extract_numbers(text):
     # ── Suspected / probable ──────────────────────────────────────────────────
     suspected = extract_in_context(text, [
         r"(\d+)\s*probable",
-        r"two\s*probable",   # text match for "two probable"
+
         r"(\d+)\s*suspected\s*(?:case|patient|infection)",
         r"suspected[^.]{0,80}?(\d+)\s*(?:case|patient)",
         r"(?:probable|possible)[^.]{0,80}?(\d+)\s*(?:case|patient)",
